@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import HeroSection from '@/components/HeroSection';
 import ProductCard from '@/components/ProductCard';
 import products from '@/data/products.json';
@@ -79,7 +80,7 @@ export default function HomePage() {
                             Shop by Category
                         </h2>
                         <p className="text-xl text-gray-600">
-                            Find exactly what you're looking for
+                            Find exactly what you&apos;re looking for
                         </p>
                     </motion.div>
 
@@ -102,9 +103,11 @@ export default function HomePage() {
                                 className="group bg-white rounded-lg border border-gray-200 hover:border-allegro-orange hover:shadow-lg transition-all duration-300 overflow-hidden"
                             >
                                 <div className="aspect-square bg-gray-100 overflow-hidden">
-                                    <img
+                                    <Image
                                         src={category.image}
                                         alt={category.name}
+                                        width={300}
+                                        height={300}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                     />
                                 </div>

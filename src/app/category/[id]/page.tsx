@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Filter, Grid, List, ChevronDown } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
@@ -256,9 +257,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                 <ProductCard product={product} />
                             ) : (
                                 <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center space-x-6 hover:shadow-lg transition-shadow">
-                                    <img
+                                    <Image
                                         src={product.image}
                                         alt={product.title}
+                                        width={96}
+                                        height={96}
                                         className="w-24 h-24 object-cover rounded-lg"
                                     />
                                     <div className="flex-1">
