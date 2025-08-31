@@ -1,6 +1,6 @@
 # KmerCart - Modern E-commerce Marketplace
 
-A modern, responsive e-commerce marketplace application built with Next.js 14, inspired by Allegro's design with a Polish touch. This project features a clean, minimal interface with orange accents, comprehensive product management, and smooth animations.
+A modern, responsive e-commerce marketplace application built with Next.js 14. This project features a clean, minimal interface with orange accents, comprehensive product management, and smooth animations.
 
 ## 🚀 Features
 
@@ -13,7 +13,7 @@ A modern, responsive e-commerce marketplace application built with Next.js 14, i
 - **Responsive Design** optimized for mobile and desktop
 
 ### Design & UX
-- **Polish E-commerce Design** with orange color scheme and clean layout
+- **Modern E-commerce Design** with orange color scheme and clean layout
 - **Smooth Animations** powered by Framer Motion
 - **Interactive Components** with hover effects and transitions
 - **Modern UI Elements** using Lucide React icons
