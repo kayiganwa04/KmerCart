@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Star, ShoppingCart } from 'lucide-react';
 import { Product } from '@/types';
 import { useCartStore } from '@/store/cartStore';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 
 interface ProductCardProps {
     product: Product;
@@ -13,6 +15,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     const addItem = useCartStore((state) => state.addItem);
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -21,9 +25,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'EUR',
         }).format(price);
     };
 
@@ -69,7 +73,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {!product.inStock && (
                         <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
                             <span className="bg-white px-4 py-2 rounded-lg text-sm font-medium text-gray-900">
-                                Out of Stock
+                                {t('common.outOfStock')}
                             </span>
                         </div>
                     )}
@@ -112,9 +116,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </div>
 
                     {/* Seller */}
-                    <div className="text-sm text-gray-600 mb-6">
-                        by {product.seller.name}
-                    </div>
+                                            <div className="text-sm text-gray-600 mb-6">
+                            {t('product.by')} {product.seller.name}
+                        </div>
 
                     {/* Add to Cart Button */}
                     <motion.button
@@ -128,7 +132,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             }`}
                     >
                         <ShoppingCart className="h-5 w-5" />
-                        <span>{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+                        <span>{product.inStock ? t('common.addToCart') : t('common.outOfStock')}</span>
                     </motion.button>
                 </div>
             </Link>

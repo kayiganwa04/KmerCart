@@ -5,14 +5,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export default function CartPage() {
     const { items, updateQuantity, removeItem, clearCart, getTotalPrice } = useCartStore();
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'EUR',
         }).format(price);
     };
 
@@ -27,9 +31,9 @@ export default function CartPage() {
                         className="text-center"
                     >
                         <ShoppingBag className="h-24 w-24 text-gray-400 mx-auto mb-6" />
-                        <h1 className="text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h1>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('cart.empty')}</h1>
                         <p className="text-xl text-gray-600 mb-8">
-                            Looks like you haven&apos;t added anything to your cart yet.
+                            {t('cart.emptySubtitle')}
                         </p>
                         <Link href="/">
                             <motion.button
@@ -37,7 +41,7 @@ export default function CartPage() {
                                 whileTap={{ scale: 0.95 }}
                                 className="bg-allegro-orange text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-allegro-orange-dark transition-colors"
                             >
-                                Continue Shopping
+                                {t('cart.continueShopping')}
                             </motion.button>
                         </Link>
                     </motion.div>
@@ -66,10 +70,10 @@ export default function CartPage() {
                                 <ArrowLeft className="h-5 w-5" />
                             </motion.button>
                         </Link>
-                        <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">{t('cart.title')}</h1>
                     </div>
                     <p className="text-gray-600">
-                        {items.length} {items.length === 1 ? 'item' : 'items'} in your cart
+                        {items.length} {items.length === 1 ? t('cart.item') : t('cart.items')} {t('cart.itemsInCart')}
                     </p>
                 </motion.div>
 
@@ -180,7 +184,7 @@ export default function CartPage() {
                                 onClick={clearCart}
                                 className="text-red-500 hover:text-red-700 font-medium transition-colors"
                             >
-                                Clear Cart
+                                {t('cart.clearCart')}
                             </button>
                         </motion.div>
                     </div>
@@ -193,27 +197,27 @@ export default function CartPage() {
                         className="lg:col-span-1"
                     >
                         <div className="bg-gray-50 rounded-lg p-6 sticky top-32">
-                            <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('cart.orderSummary')}</h2>
 
                             <div className="space-y-4">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Subtotal</span>
+                                    <span className="text-gray-600">{t('cart.subtotal')}</span>
                                     <span className="font-medium">{formatPrice(getTotalPrice())}</span>
                                 </div>
 
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Shipping</span>
-                                    <span className="font-medium text-green-600">Free</span>
+                                    <span className="text-gray-600">{t('cart.shipping')}</span>
+                                    <span className="font-medium text-green-600">{t('cart.free')}</span>
                                 </div>
 
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Tax</span>
+                                    <span className="text-gray-600">{t('cart.tax')}</span>
                                     <span className="font-medium">{formatPrice(getTotalPrice() * 0.08)}</span>
                                 </div>
 
                                 <div className="border-t border-gray-300 pt-4">
                                     <div className="flex justify-between">
-                                        <span className="text-lg font-bold text-gray-900">Total</span>
+                                        <span className="text-lg font-bold text-gray-900">{t('cart.total')}</span>
                                         <span className="text-lg font-bold text-gray-900">
                                             {formatPrice(getTotalPrice() * 1.08)}
                                         </span>
@@ -226,7 +230,7 @@ export default function CartPage() {
                                 whileTap={{ scale: 0.98 }}
                                 className="w-full bg-allegro-orange text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-allegro-orange-dark transition-colors mt-6"
                             >
-                                Proceed to Checkout
+                                {t('cart.proceedToCheckout')}
                             </motion.button>
 
                             <div className="mt-4 text-center">
@@ -234,7 +238,7 @@ export default function CartPage() {
                                     href="/"
                                     className="text-allegro-orange hover:text-allegro-orange-dark font-medium transition-colors"
                                 >
-                                    Continue Shopping
+                                    {t('cart.continueShopping')}
                                 </Link>
                             </div>
 
@@ -243,15 +247,15 @@ export default function CartPage() {
                                 <div className="text-sm text-gray-600 space-y-2">
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span>Secure 256-bit SSL encryption</span>
+                                        <span>{t('cart.secureEncryption')}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span>30-day money-back guarantee</span>
+                                        <span>{t('cart.moneyBackGuarantee')}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span>Free shipping on all orders</span>
+                                        <span>{t('common.freeShippingOrders')}</span>
                                     </div>
                                 </div>
                             </div>

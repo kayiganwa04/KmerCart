@@ -2,14 +2,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, ShoppingCart, User, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Globe } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const { currentLocale, setCurrentLocale } = useLanguage();
     const totalItems = useCartStore((state) => state.getTotalItems());
+    const t = useTranslations();
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,7 +32,7 @@ export default function Header() {
                             whileHover={{ scale: 1.05 }}
                             className="text-2xl font-bold text-allegro-orange"
                         >
-                            KmerCart
+                            {t('header.brand')}
                         </motion.div>
                     </Link>
 
@@ -37,7 +42,7 @@ export default function Header() {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    placeholder="Search for products..."
+                                    placeholder={t('header.searchPlaceholder')}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-full px-4 py-2 pl-4 pr-12 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-allegro-orange focus:border-transparent outline-none transition-all"
@@ -54,6 +59,50 @@ export default function Header() {
 
                     {/* Right Side Icons */}
                     <div className="flex items-center space-x-4">
+                        {/* Language Selector */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+                                className="flex items-center space-x-2 p-2 text-gray-700 hover:text-allegro-orange transition-colors"
+                            >
+                                <Globe className="h-5 w-5" />
+                                <span className="text-sm font-medium hidden md:block">
+                                    {currentLocale === 'en' ? t('common.english') : t('common.french')}
+                                </span>
+                            </button>
+                            <AnimatePresence>
+                                {isLanguageMenuOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                        className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50"
+                                    >
+                                        <button
+                                            onClick={() => {
+                                                setCurrentLocale('en');
+                                                setIsLanguageMenuOpen(false);
+                                            }}
+                                            className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${currentLocale === 'en' ? 'text-allegro-orange font-medium' : 'text-gray-700'
+                                                }`}
+                                        >
+                                            {t('common.english')}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setCurrentLocale('fr');
+                                                setIsLanguageMenuOpen(false);
+                                            }}
+                                            className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${currentLocale === 'fr' ? 'text-allegro-orange font-medium' : 'text-gray-700'
+                                                }`}
+                                        >
+                                            {t('common.french')}
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
                         {/* Cart */}
                         <Link href="/cart">
                             <motion.div
@@ -82,7 +131,7 @@ export default function Header() {
                                 className="hidden md:flex items-center space-x-2 p-2 text-gray-700 hover:text-allegro-orange transition-colors"
                             >
                                 <User className="h-6 w-6" />
-                                <span className="text-sm font-medium">Login</span>
+                                <span className="text-sm font-medium">{t('header.login')}</span>
                             </motion.div>
                         </Link>
 
@@ -102,7 +151,7 @@ export default function Header() {
                         <div className="relative">
                             <input
                                 type="text"
-                                placeholder="Search for products..."
+                                placeholder={t('header.searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full px-4 py-2 pr-12 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-allegro-orange focus:border-transparent outline-none"
@@ -134,7 +183,7 @@ export default function Header() {
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 <User className="h-5 w-5" />
-                                <span>Login / Register</span>
+                                <span>{t('header.login')} / Register</span>
                             </Link>
                         </div>
                     </motion.div>

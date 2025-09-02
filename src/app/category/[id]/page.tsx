@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Filter, Grid, List, ChevronDown } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import ProductCard from '@/components/ProductCard';
 import products from '@/data/products.json';
 import categories from '@/data/categories.json';
@@ -20,6 +22,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     const [showFilters, setShowFilters] = useState(false);
     const [priceRange, setPriceRange] = useState({ min: 0, max: 2000 });
     const [inStockOnly, setInStockOnly] = useState(false);
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
 
     const category = categories.find(c => c.id === params.id) as Category;
     if (!category) {
@@ -91,7 +95,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 >
                     <nav className="mb-4">
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
-                            <a href="/" className="hover:text-allegro-orange transition-colors">Home</a>
+                            <a href="/" className="hover:text-allegro-orange transition-colors">{t('home.hero.title')}</a>
                             <span>/</span>
                             <span className="text-gray-900 capitalize">{category.name}</span>
                         </div>
@@ -101,7 +105,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900 capitalize">{category.name}</h1>
                             <p className="text-gray-600 mt-2">
-                                {categoryProducts.length} product{categoryProducts.length !== 1 ? 's' : ''} found
+                                {categoryProducts.length} {categoryProducts.length !== 1 ? t('common.products') : t('common.product')} {t('common.productsFound')}
                             </p>
                         </div>
 
@@ -110,8 +114,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                             <button
                                 onClick={() => setViewMode('grid')}
                                 className={`p-2 rounded-lg transition-colors ${viewMode === 'grid'
-                                        ? 'bg-allegro-orange text-white'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    ? 'bg-allegro-orange text-white'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
                             >
                                 <Grid className="h-5 w-5" />
@@ -119,8 +123,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`p-2 rounded-lg transition-colors ${viewMode === 'list'
-                                        ? 'bg-allegro-orange text-white'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    ? 'bg-allegro-orange text-white'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                     }`}
                             >
                                 <List className="h-5 w-5" />
@@ -143,23 +147,23 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                             className="flex items-center space-x-2 text-gray-700 hover:text-allegro-orange transition-colors"
                         >
                             <Filter className="h-5 w-5" />
-                            <span>Filters</span>
+                            <span>{t('common.filters')}</span>
                             <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
                         </button>
 
                         {/* Sort Dropdown */}
                         <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-600">Sort by:</span>
+                            <span className="text-sm text-gray-600">{t('common.sortBy')}</span>
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value)}
                                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-allegro-orange focus:border-transparent outline-none"
                             >
-                                <option value="featured">Featured</option>
-                                <option value="price-low">Price: Low to High</option>
-                                <option value="price-high">Price: High to Low</option>
-                                <option value="rating">Highest Rated</option>
-                                <option value="newest">Newest</option>
+                                <option value="featured">{t('common.featured')}</option>
+                                <option value="price-low">{t('common.priceLowToHigh')}</option>
+                                <option value="price-high">{t('common.priceHighToLow')}</option>
+                                <option value="rating">{t('common.highestRated')}</option>
+                                <option value="newest">{t('common.newest')}</option>
                             </select>
                         </div>
                     </div>
@@ -176,7 +180,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                 {/* Price Range */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Price Range
+                                        {t('common.priceRange')}
                                     </label>
                                     <div className="space-y-2">
                                         <div className="flex items-center space-x-2">
@@ -185,7 +189,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                                 value={priceRange.min}
                                                 onChange={(e) => setPriceRange({ ...priceRange, min: Number(e.target.value) })}
                                                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                                                placeholder="Min"
+                                                placeholder={t('common.min')}
                                             />
                                             <span className="text-gray-500">to</span>
                                             <input
@@ -193,7 +197,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                                 value={priceRange.max}
                                                 onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
                                                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                                                placeholder="Max"
+                                                placeholder={t('common.max')}
                                             />
                                         </div>
                                     </div>
@@ -202,7 +206,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                 {/* Availability */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Availability
+                                        {t('common.availability')}
                                     </label>
                                     <div className="space-y-2">
                                         <label className="flex items-center">
@@ -212,7 +216,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                                 onChange={(e) => setInStockOnly(e.target.checked)}
                                                 className="h-4 w-4 text-allegro-orange focus:ring-allegro-orange border-gray-300 rounded"
                                             />
-                                            <span className="ml-2 text-sm text-gray-700">In stock only</span>
+                                            <span className="ml-2 text-sm text-gray-700">{t('common.inStockOnly')}</span>
                                         </label>
                                     </div>
                                 </div>
@@ -221,7 +225,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                 {category.subcategories && (
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Subcategories
+                                            {t('common.subcategories')}
                                         </label>
                                         <div className="space-y-2">
                                             {category.subcategories.map((subcategory) => (
@@ -247,8 +251,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                     initial="hidden"
                     animate="visible"
                     className={`grid gap-6 ${viewMode === 'grid'
-                            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                            : 'grid-cols-1'
+                        ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                        : 'grid-cols-1'
                         }`}
                 >
                     {categoryProducts.map((product) => (
@@ -266,7 +270,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                     />
                                     <div className="flex-1">
                                         <h3 className="text-lg font-medium text-gray-900 mb-2">{product.title}</h3>
-                                        <p className="text-gray-600 text-sm mb-2">by {product.seller.name}</p>
+                                        <p className="text-gray-600 text-sm mb-2">{t('product.by')} {product.seller.name}</p>
                                         <div className="flex items-center space-x-4">
                                             <span className="text-xl font-bold text-gray-900">
                                                 ${product.price}
@@ -280,7 +284,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                                         </div>
                                     </div>
                                     <button className="bg-allegro-orange text-white px-6 py-2 rounded-lg hover:bg-allegro-orange-dark transition-colors">
-                                        Add to Cart
+                                        {t('common.addToCart')}
                                     </button>
                                 </div>
                             )}

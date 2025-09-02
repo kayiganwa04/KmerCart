@@ -3,8 +3,13 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export default function HeroSection() {
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
+
     return (
         <section className="bg-gradient-to-r from-allegro-orange to-allegro-orange-dark text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
@@ -16,11 +21,10 @@ export default function HeroSection() {
                         transition={{ duration: 0.6 }}
                     >
                         <h1 className="text-4xl lg:text-6xl font-bold mb-6">
-                            Discover Amazing Products
+                            {t('home.hero.title')}
                         </h1>
                         <p className="text-xl lg:text-2xl mb-8 text-orange-100">
-                            Shop millions of products from trusted sellers worldwide.
-                            Get the best deals with fast, secure delivery.
+                            {t('home.hero.subtitle')}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <motion.div
@@ -31,7 +35,7 @@ export default function HeroSection() {
                                     href="#featured-products"
                                     className="inline-block bg-white text-allegro-orange px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
                                 >
-                                    Shop Now
+                                    {t('home.hero.cta')}
                                 </Link>
                             </motion.div>
                             <motion.div
@@ -42,7 +46,7 @@ export default function HeroSection() {
                                     href="/category/electronics"
                                     className="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-allegro-orange transition-colors"
                                 >
-                                    Browse Electronics
+                                    {t('category.electronics')}
                                 </Link>
                             </motion.div>
                         </div>
@@ -76,19 +80,19 @@ export default function HeroSection() {
                 >
                     <div className="text-center">
                         <div className="text-3xl lg:text-4xl font-bold mb-2">10M+</div>
-                        <div className="text-orange-100">Products</div>
+                        <div className="text-orange-100">{t('home.stats.products')}</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl lg:text-4xl font-bold mb-2">500K+</div>
-                        <div className="text-orange-100">Sellers</div>
+                        <div className="text-orange-100">{t('home.stats.sellers')}</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl lg:text-4xl font-bold mb-2">50M+</div>
-                        <div className="text-orange-100">Happy Customers</div>
+                        <div className="text-orange-100">{t('home.stats.customers')}</div>
                     </div>
                     <div className="text-center">
                         <div className="text-3xl lg:text-4xl font-bold mb-2">99.9%</div>
-                        <div className="text-orange-100">Uptime</div>
+                        <div className="text-orange-100">{t('home.stats.uptime')}</div>
                     </div>
                 </motion.div>
             </div>

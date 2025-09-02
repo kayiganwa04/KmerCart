@@ -13,6 +13,8 @@ import {
     ChevronDown,
     Grid3X3
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import categories from '@/data/categories.json';
 import { Category } from '@/types';
 
@@ -28,6 +30,8 @@ const iconMap = {
 
 export default function CategoryNav() {
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
 
     const getIcon = (iconName: string) => {
         const Icon = iconMap[iconName as keyof typeof iconMap] || Grid3X3;
@@ -52,7 +56,7 @@ export default function CategoryNav() {
                                     className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-allegro-orange hover:bg-gray-50 rounded-lg transition-all whitespace-nowrap group"
                                 >
                                     <Icon className="h-4 w-4" />
-                                    <span>{category.name}</span>
+                                    <span>{t(`category.${category.id}`)}</span>
                                     {category.subcategories && (
                                         <ChevronDown className="h-4 w-4 group-hover:rotate-180 transition-transform" />
                                     )}

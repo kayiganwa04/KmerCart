@@ -4,12 +4,16 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,7 +37,7 @@ export default function LoginPage() {
                         className="flex items-center space-x-2 text-gray-600 hover:text-allegro-orange transition-colors mb-4"
                     >
                         <ArrowLeft className="h-5 w-5" />
-                        <span>Back to Store</span>
+                        <span>{t('common.backToStore')}</span>
                     </motion.button>
                 </Link>
 
@@ -45,12 +49,9 @@ export default function LoginPage() {
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
                         <h1 className="text-3xl font-bold text-allegro-orange mb-2">KmerCart</h1>
-                        <h2 className="text-2xl font-bold text-gray-900">Sign in to your account</h2>
+                        <h2 className="text-2xl font-bold text-gray-900">{t('auth.signInToAccount')}</h2>
                         <p className="mt-2 text-gray-600">
-                            Or{' '}
-                            <Link href="/register" className="font-medium text-allegro-orange hover:text-allegro-orange-dark transition-colors">
-                                create a new account
-                            </Link>
+                            {t('auth.orCreateNewAccount')}
                         </p>
                     </motion.div>
                 </div>
@@ -66,7 +67,7 @@ export default function LoginPage() {
                         {/* Email Field */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                                Email address
+                                {t('auth.emailAddress')}
                             </label>
                             <div className="relative">
                                 <input
@@ -78,7 +79,7 @@ export default function LoginPage() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-allegro-orange focus:border-transparent outline-none transition-all"
-                                    placeholder="Enter your email"
+                                    placeholder={t('auth.enterEmail')}
                                 />
                                 <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
                             </div>
@@ -87,7 +88,7 @@ export default function LoginPage() {
                         {/* Password Field */}
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                                Password
+                                {t('auth.password')}
                             </label>
                             <div className="relative">
                                 <input
@@ -99,7 +100,7 @@ export default function LoginPage() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-allegro-orange focus:border-transparent outline-none transition-all"
-                                    placeholder="Enter your password"
+                                    placeholder={t('auth.enterPassword')}
                                 />
                                 <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
                                 <button
@@ -124,14 +125,14 @@ export default function LoginPage() {
                                     className="h-4 w-4 text-allegro-orange focus:ring-allegro-orange border-gray-300 rounded"
                                 />
                                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                                    Remember me
+                                    {t('auth.rememberMe')}
                                 </label>
                             </div>
                             <Link
                                 href="/forgot-password"
                                 className="text-sm text-allegro-orange hover:text-allegro-orange-dark transition-colors"
                             >
-                                Forgot your password?
+                                {t('auth.forgotPassword')}
                             </Link>
                         </div>
 
@@ -142,7 +143,7 @@ export default function LoginPage() {
                             type="submit"
                             className="w-full bg-allegro-orange text-white py-3 px-4 rounded-lg font-medium text-lg hover:bg-allegro-orange-dark transition-colors focus:outline-none focus:ring-2 focus:ring-allegro-orange focus:ring-offset-2"
                         >
-                            Sign in
+                            {t('auth.signIn')}
                         </motion.button>
                     </form>
 
@@ -153,7 +154,7 @@ export default function LoginPage() {
                                 <div className="w-full border-t border-gray-300" />
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                                <span className="px-2 bg-white text-gray-500">{t('common.orContinueWith')}</span>
                             </div>
                         </div>
 
@@ -164,14 +165,14 @@ export default function LoginPage() {
                                 whileTap={{ scale: 0.98 }}
                                 className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
                             >
-                                <span>Google</span>
+                                <span>{t('common.google')}</span>
                             </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"
                             >
-                                <span>Facebook</span>
+                                <span>{t('common.facebook')}</span>
                             </motion.button>
                         </div>
                     </div>
@@ -184,13 +185,13 @@ export default function LoginPage() {
                     transition={{ duration: 0.6, delay: 0.6 }}
                     className="text-center text-sm text-gray-600"
                 >
-                    By signing in, you agree to our{' '}
+                    {t('common.bySigningIn')}{' '}
                     <Link href="/terms" className="text-allegro-orange hover:text-allegro-orange-dark transition-colors">
-                        Terms of Service
+                        {t('auth.termsOfService')}
                     </Link>{' '}
-                    and{' '}
+                    {t('common.and')}{' '}
                     <Link href="/privacy" className="text-allegro-orange hover:text-allegro-orange-dark transition-colors">
-                        Privacy Policy
+                        {t('auth.privacyPolicy')}
                     </Link>
                 </motion.div>
             </motion.div>

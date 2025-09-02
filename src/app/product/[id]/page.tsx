@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslations } from '@/hooks/useTranslations';
 import ProductCard from '@/components/ProductCard';
 import products from '@/data/products.json';
 import { Product } from '@/types';
@@ -18,6 +20,8 @@ export default function ProductPage({ params }: ProductPageProps) {
     const product = products.find(p => p.id === params.id) as Product;
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const { currentLocale } = useLanguage();
+    const t = useTranslations();
 
     const addItem = useCartStore((state) => state.addItem);
 
@@ -37,9 +41,9 @@ export default function ProductPage({ params }: ProductPageProps) {
     };
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'EUR',
         }).format(price);
     };
 
@@ -49,7 +53,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 {/* Breadcrumb */}
                 <nav className="mb-8">
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <a href="/" className="hover:text-allegro-orange transition-colors">Home</a>
+                        <a href="/" className="hover:text-allegro-orange transition-colors">{t('home.hero.title')}</a>
                         <span>/</span>
                         <a href={`/category/${product.category}`} className="hover:text-allegro-orange transition-colors capitalize">
                             {product.category}
@@ -87,8 +91,8 @@ export default function ProductPage({ params }: ProductPageProps) {
                                             key={index}
                                             onClick={() => setSelectedImage(index)}
                                             className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === index
-                                                    ? 'border-allegro-orange'
-                                                    : 'border-gray-200 hover:border-gray-300'
+                                                ? 'border-allegro-orange'
+                                                : 'border-gray-200 hover:border-gray-300'
                                                 }`}
                                         >
                                             <Image
@@ -120,9 +124,9 @@ export default function ProductPage({ params }: ProductPageProps) {
                                         <span
                                             key={tag}
                                             className={`px-3 py-1 text-sm font-medium rounded-full ${tag === 'new' ? 'bg-green-100 text-green-800' :
-                                                    tag === 'bestseller' ? 'bg-blue-100 text-blue-800' :
-                                                        tag === 'limited' ? 'bg-red-100 text-red-800' :
-                                                            'bg-gray-100 text-gray-800'
+                                                tag === 'bestseller' ? 'bg-blue-100 text-blue-800' :
+                                                    tag === 'limited' ? 'bg-red-100 text-red-800' :
+                                                        'bg-gray-100 text-gray-800'
                                                 }`}
                                         >
                                             {tag}
@@ -143,8 +147,8 @@ export default function ProductPage({ params }: ProductPageProps) {
                                         <Star
                                             key={i}
                                             className={`h-5 w-5 ${i < Math.floor(product.rating)
-                                                    ? 'text-yellow-400 fill-current'
-                                                    : 'text-gray-300'
+                                                ? 'text-yellow-400 fill-current'
+                                                : 'text-gray-300'
                                                 }`}
                                         />
                                     ))}
@@ -188,14 +192,14 @@ export default function ProductPage({ params }: ProductPageProps) {
                                                 <Star
                                                     key={i}
                                                     className={`h-4 w-4 ${i < Math.floor(product.seller.rating)
-                                                            ? 'text-yellow-400 fill-current'
-                                                            : 'text-gray-300'
+                                                        ? 'text-yellow-400 fill-current'
+                                                        : 'text-gray-300'
                                                         }`}
                                                 />
                                             ))}
                                         </div>
                                         <span className="text-sm text-gray-600">
-                                            ({product.seller.reviewCount} reviews)
+                                            ({product.seller.reviewCount} {t('product.reviews')})
                                         </span>
                                     </div>
                                 </div>
@@ -204,11 +208,11 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                         {/* Stock Status */}
                         <div className={`p-4 rounded-lg ${product.inStock
-                                ? 'bg-green-50 text-green-800'
-                                : 'bg-red-50 text-red-800'
+                            ? 'bg-green-50 text-green-800'
+                            : 'bg-red-50 text-red-800'
                             }`}>
                             <div className="font-medium">
-                                {product.inStock ? '✓ In Stock' : '✗ Out of Stock'}
+                                {product.inStock ? `✓ ${t('product.inStock')}` : `✗ ${t('product.outOfStock')}`}
                             </div>
                             {product.inStock && (
                                 <div className="text-sm mt-1">
@@ -221,7 +225,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                         {product.inStock && (
                             <div className="space-y-4">
                                 <div className="flex items-center space-x-4">
-                                    <label className="font-medium text-gray-900">Quantity:</label>
+                                    <label className="font-medium text-gray-900">{t('product.quantity')}:</label>
                                     <div className="flex items-center border border-gray-300 rounded-lg">
                                         <button
                                             onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -247,7 +251,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                         className="flex-1 bg-allegro-orange text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-allegro-orange-dark transition-colors flex items-center justify-center space-x-2"
                                     >
                                         <ShoppingCart className="h-5 w-5" />
-                                        <span>Add to Cart</span>
+                                        <span>{t('common.addToCart')}</span>
                                     </motion.button>
 
                                     <motion.button
@@ -265,15 +269,15 @@ export default function ProductPage({ params }: ProductPageProps) {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200">
                             <div className="flex items-center space-x-3 text-sm">
                                 <Truck className="h-5 w-5 text-allegro-orange" />
-                                <span>Free Shipping</span>
+                                <span>{t('product.freeShipping')}</span>
                             </div>
                             <div className="flex items-center space-x-3 text-sm">
                                 <Shield className="h-5 w-5 text-allegro-orange" />
-                                <span>Buyer Protection</span>
+                                <span>{t('product.securePayment')}</span>
                             </div>
                             <div className="flex items-center space-x-3 text-sm">
                                 <RotateCcw className="h-5 w-5 text-allegro-orange" />
-                                <span>30-Day Returns</span>
+                                <span>{t('product.easyReturns')}</span>
                             </div>
                         </div>
                     </motion.div>
@@ -286,7 +290,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="mt-16 bg-gray-50 p-8 rounded-lg"
                 >
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Description</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('product.description')}</h2>
                     <p className="text-gray-700 leading-relaxed">{product.description}</p>
                 </motion.div>
 
