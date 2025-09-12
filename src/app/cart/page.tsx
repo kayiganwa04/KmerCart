@@ -14,10 +14,15 @@ export default function CartPage() {
     const t = useTranslations();
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
-            style: 'currency',
-            currency: 'EUR',
-        }).format(price);
+        try {
+            return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
+                style: 'currency',
+                currency: 'FRF',
+            }).format(price);
+        } catch {
+            const number = new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US').format(price);
+            return `${number} FRF`;
+        }
     };
 
     if (items.length === 0) {
@@ -255,7 +260,7 @@ export default function CartPage() {
                                     </div>
                                     <div className="flex items-center space-x-2">
                                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <span>{t('common.freeShippingOrders')}</span>
+                                        <span>{t('cart.freeShippingOrders')}</span>
                                     </div>
                                 </div>
                             </div>

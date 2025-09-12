@@ -5,7 +5,7 @@
     "continueShopping": "Continue Shopping",
     "english": "English",
     "french": "French",
-    "currency": "EUR",
+    "currency": "FRF",
     "backToStore": "Back to Store",
     "orContinueWith": "Or continue with",
     "google": "Google",
@@ -58,8 +58,6 @@
     "lastName": "Last Name",
     "firstNamePlaceholder": "First name",
     "lastNamePlaceholder": "Last name",
-    "createPassword": "Create a password",
-    "confirmYourPassword": "Confirm your password",
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy"
   },

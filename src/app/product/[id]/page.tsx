@@ -41,10 +41,15 @@ export default function ProductPage({ params }: ProductPageProps) {
     };
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
-            style: 'currency',
-            currency: 'EUR',
-        }).format(price);
+        try {
+            return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
+                style: 'currency',
+                currency: 'FRF',
+            }).format(price);
+        } catch {
+            const number = new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US').format(price);
+            return `${number} FRF`;
+        }
     };
 
     return (

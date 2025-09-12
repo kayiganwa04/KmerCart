@@ -25,10 +25,15 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
-            style: 'currency',
-            currency: 'EUR',
-        }).format(price);
+        try {
+            return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
+                style: 'currency',
+                currency: 'FRF',
+            }).format(price);
+        } catch {
+            const number = new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US').format(price);
+            return `${number} FRF`;
+        }
     };
 
     return (
@@ -116,9 +121,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                     </div>
 
                     {/* Seller */}
-                                            <div className="text-sm text-gray-600 mb-6">
-                            {t('product.by')} {product.seller.name}
-                        </div>
+                    <div className="text-sm text-gray-600 mb-6">
+                        {t('product.by')} {product.seller.name}
+                    </div>
 
                     {/* Add to Cart Button */}
                     <motion.button

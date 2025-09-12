@@ -5,7 +5,7 @@
     "continueShopping": "Continuer les achats",
     "english": "Anglais",
     "french": "Français",
-    "currency": "EUR",
+    "currency": "FRF",
     "backToStore": "Retour au magasin",
     "orContinueWith": "Ou continuer avec",
     "google": "Google",
@@ -58,8 +58,6 @@
     "lastName": "Nom de famille",
     "firstNamePlaceholder": "Prénom",
     "lastNamePlaceholder": "Nom de famille",
-    "createPassword": "Créer un mot de passe",
-    "confirmYourPassword": "Confirmez votre mot de passe",
     "termsOfService": "Conditions d'utilisation",
     "privacyPolicy": "Politique de confidentialité"
   },
