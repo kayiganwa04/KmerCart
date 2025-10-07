@@ -61,8 +61,8 @@ export default function HeroSection() {
                     >
                         <div className="relative w-full h-96 lg:h-[500px]">
                             <Image
-                                src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600"
-                                alt="Shopping illustration"
+                                src="https://media.istockphoto.com/id/1591660312/photo/happy-portrait-and-woman-with-shopping-bags-in-studio-after-sale-promotion-or-discount-smile.jpg?s=2048x2048&w=is&k=20&c=KyOJpfAEaSpFWxDNaFnBHVnKuL15qChpgrShaW-Za8Y="
+                                alt="African woman smiling with shopping bags"
                                 fill
                                 className="object-contain"
                                 priority

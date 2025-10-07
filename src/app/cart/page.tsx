@@ -17,11 +17,11 @@ export default function CartPage() {
         try {
             return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
                 style: 'currency',
-                currency: 'FRF',
+                currency: 'CFA',
             }).format(price);
         } catch {
             const number = new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US').format(price);
-            return `${number} FRF`;
+            return `${number} CFA`;
         }
     };
 
