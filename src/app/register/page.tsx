@@ -3,24 +3,57 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
+import authService from '@/services/auth.service';
 
 export default function RegisterPage() {
+    const router = useRouter();
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
+        role: 'customer', // 'customer' or 'vendor'
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [agreeToTerms, setAgreeToTerms] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Implement registration logic here
-        console.log('Registration attempt:', formData);
+        setError('');
+
+        // Validate passwords match
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
+        // Validate password strength
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        if (!passwordRegex.test(formData.password)) {
+            setError('Password must meet all requirements');
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const { confirmPassword, ...registrationData } = formData;
+            await authService.register(registrationData);
+
+            // Redirect to home or dashboard after successful registration
+            router.push('/');
+        } catch (err: any) {
+            console.error('Registration error:', err);
+            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +109,43 @@ export default function RegisterPage() {
                     className="bg-white rounded-lg shadow-lg p-8"
                 >
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Role Selection */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                I want to register as:
+                            </label>
+                            <div className="grid grid-cols-2 gap-4">
+                                <motion.button
+                                    type="button"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setFormData({ ...formData, role: 'customer' })}
+                                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                                        formData.role === 'customer'
+                                            ? 'border-allegro-orange bg-orange-50 text-allegro-orange'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                    }`}
+                                >
+                                    <div className="font-semibold mb-1">Customer</div>
+                                    <div className="text-xs text-gray-600">Browse and buy products</div>
+                                </motion.button>
+                                <motion.button
+                                    type="button"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setFormData({ ...formData, role: 'vendor' })}
+                                    className={`p-4 border-2 rounded-lg text-center transition-all ${
+                                        formData.role === 'vendor'
+                                            ? 'border-allegro-orange bg-orange-50 text-allegro-orange'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                    }`}
+                                >
+                                    <div className="font-semibold mb-1">Vendor</div>
+                                    <div className="text-xs text-gray-600">Sell your products</div>
+                                </motion.button>
+                            </div>
+                        </div>
+
                         {/* Name Fields */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
@@ -194,6 +264,13 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
+                        {/* Error Message */}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
+
                         {/* Password Requirements */}
                         <div className="text-sm text-gray-600">
                             <p className="mb-2">Password must contain:</p>
@@ -202,6 +279,7 @@ export default function RegisterPage() {
                                 <li>One uppercase letter</li>
                                 <li>One lowercase letter</li>
                                 <li>One number</li>
+                                <li>One special character (@, $, !, %, *, ?, &, #)</li>
                             </ul>
                         </div>
 
@@ -229,16 +307,16 @@ export default function RegisterPage() {
 
                         {/* Submit Button */}
                         <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: loading ? 1 : 1.02 }}
+                            whileTap={{ scale: loading ? 1 : 0.98 }}
                             type="submit"
-                            disabled={!agreeToTerms}
-                            className={`w-full py-3 px-4 rounded-lg font-medium text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-allegro-orange focus:ring-offset-2 ${agreeToTerms
+                            disabled={!agreeToTerms || loading}
+                            className={`w-full py-3 px-4 rounded-lg font-medium text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-allegro-orange focus:ring-offset-2 ${agreeToTerms && !loading
                                 ? 'bg-allegro-orange text-white hover:bg-allegro-orange-dark'
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 }`}
                         >
-                            Create Account
+                            {loading ? 'Creating Account...' : 'Create Account'}
                         </motion.button>
                     </form>
 

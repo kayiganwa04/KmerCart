@@ -3,22 +3,38 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import authService from '@/services/auth.service';
 
 export default function LoginPage() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const { currentLocale } = useLanguage();
     const t = useTranslations();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Implement login logic here
-        console.log('Login attempt:', { email, password, rememberMe });
+        setError('');
+        setLoading(true);
+
+        try {
+            await authService.login({ email, password });
+            // Redirect to home or dashboard after successful login
+            router.push('/');
+        } catch (err: any) {
+            console.error('Login error:', err);
+            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -113,6 +129,13 @@ export default function LoginPage() {
                             </div>
                         </div>
 
+                        {/* Error Message */}
+                        {error && (
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                                {error}
+                            </div>
+                        )}
+
                         {/* Remember Me & Forgot Password */}
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
@@ -138,12 +161,13 @@ export default function LoginPage() {
 
                         {/* Submit Button */}
                         <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: loading ? 1 : 1.02 }}
+                            whileTap={{ scale: loading ? 1 : 0.98 }}
                             type="submit"
-                            className="w-full bg-allegro-orange text-white py-3 px-4 rounded-lg font-medium text-lg hover:bg-allegro-orange-dark transition-colors focus:outline-none focus:ring-2 focus:ring-allegro-orange focus:ring-offset-2"
+                            disabled={loading}
+                            className="w-full bg-allegro-orange text-white py-3 px-4 rounded-lg font-medium text-lg hover:bg-allegro-orange-dark transition-colors focus:outline-none focus:ring-2 focus:ring-allegro-orange focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {t('auth.signIn')}
+                            {loading ? 'Signing in...' : t('auth.signIn')}
                         </motion.button>
                     </form>
 
@@ -176,6 +200,24 @@ export default function LoginPage() {
                             </motion.button>
                         </div>
                     </div>
+                </motion.div>
+
+                {/* Sign Up Link */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="text-center"
+                >
+                    <p className="text-gray-600">
+                        {t('auth.dontHaveAccount')}{' '}
+                        <Link
+                            href="/register"
+                            className="font-semibold text-allegro-orange hover:text-allegro-orange-dark transition-colors"
+                        >
+                            {t('auth.createAccount')}
+                        </Link>
+                    </p>
                 </motion.div>
 
                 {/* Footer */}

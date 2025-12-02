@@ -13,6 +13,13 @@ export default function CartPage() {
     const { currentLocale } = useLanguage();
     const t = useTranslations();
 
+    const handlePlaceOrder = () => {
+        // For now, just show an alert. Later, this will integrate with order backend
+        alert('Order functionality will be implemented soon!');
+        console.log('Order placed with items:', items);
+        console.log('Total amount:', getTotalPrice() * 1.08);
+    };
+
     const formatPrice = (price: number) => {
         try {
             return new Intl.NumberFormat(currentLocale === 'fr' ? 'fr-FR' : 'en-US', {
@@ -233,9 +240,10 @@ export default function CartPage() {
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
+                                onClick={handlePlaceOrder}
                                 className="w-full bg-allegro-orange text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-allegro-orange-dark transition-colors mt-6"
                             >
-                                {t('cart.proceedToCheckout')}
+                                {t('cart.placeOrder')}
                             </motion.button>
 
                             <div className="mt-4 text-center">

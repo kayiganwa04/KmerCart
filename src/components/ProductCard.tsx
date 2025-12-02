@@ -72,6 +72,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                         height={300}
                         className="w-full h-64 object-contain p-6 group-hover:scale-105 transition-transform duration-300"
                         priority={false}
+                        unoptimized
+                        onError={(e) => {
+                            console.error('Image failed to load:', product.image);
+                            e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Product+Image';
+                        }}
                     />
 
                     {/* Stock Status Overlay */}

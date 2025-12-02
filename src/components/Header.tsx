@@ -1,20 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, ShoppingCart, User, Menu, X, Globe } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Search, ShoppingCart, User, Menu, X, Globe, LogOut } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
+import authService from '@/services/auth.service';
 
 export default function Header() {
+    const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [user, setUser] = useState<any>(null);
     const { currentLocale, setCurrentLocale } = useLanguage();
     const totalItems = useCartStore((state) => state.getTotalItems());
     const t = useTranslations();
+
+    useEffect(() => {
+        // Check if user is logged in
+        const updateUser = () => {
+            const currentUser = authService.getCurrentUser();
+            setUser(currentUser);
+        };
+
+        updateUser();
+
+        // Listen for auth changes (login/logout/register)
+        window.addEventListener('authChanged', updateUser as EventListener);
+
+        return () => {
+            window.removeEventListener('authChanged', updateUser as EventListener);
+        };
+    }, []);
+
+    const handleLogout = async () => {
+        await authService.logout();
+        setUser(null);
+        setIsUserMenuOpen(false);
+        router.push('/');
+    };
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -124,16 +153,58 @@ export default function Header() {
                         </Link>
 
                         {/* User Account */}
-                        <Link href="/login">
-                            <motion.div
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="hidden md:flex items-center space-x-2 p-2 text-gray-700 hover:text-allegro-orange transition-colors"
-                            >
-                                <User className="h-6 w-6" />
-                                <span className="text-sm font-medium">{t('header.login')}</span>
-                            </motion.div>
-                        </Link>
+                        {user ? (
+                            <div className="relative hidden md:block">
+                                <button
+                                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                    className="flex items-center space-x-2 p-2 text-gray-700 hover:text-allegro-orange transition-colors"
+                                >
+                                    <User className="h-6 w-6" />
+                                    <span className="text-sm font-medium">{user.firstName}</span>
+                                </button>
+                                <AnimatePresence>
+                                    {isUserMenuOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50"
+                                        >
+                                            <div className="px-4 py-2 border-b border-gray-200">
+                                                <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
+                                                <p className="text-xs text-gray-500">{user.email}</p>
+                                            </div>
+                                            {user.role === 'vendor' && (
+                                                <Link href="/vendor/dashboard" className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-allegro-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18M3 6h18M3 18h18" />
+                                                    </svg>
+                                                    <span>Dashboard</span>
+                                                </Link>
+                                            )}
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                                <span>Logout</span>
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        ) : (
+                            <Link href="/login">
+                                <motion.div
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="hidden md:flex items-center space-x-2 p-2 text-gray-700 hover:text-allegro-orange transition-colors"
+                                >
+                                    <User className="h-6 w-6" />
+                                    <span className="text-sm font-medium">{t('header.login')}</span>
+                                </motion.div>
+                            </Link>
+                        )}
 
                         {/* Mobile Menu Button */}
                         <button
@@ -177,14 +248,45 @@ export default function Header() {
                         className="md:hidden bg-white border-t border-gray-200"
                     >
                         <div className="px-4 py-2 space-y-2">
-                            <Link
-                                href="/login"
-                                className="flex items-center space-x-2 p-3 text-gray-700 hover:text-allegro-orange hover:bg-gray-50 rounded-lg transition-colors"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                <User className="h-5 w-5" />
-                                <span>{t('header.login')} / Register</span>
-                            </Link>
+                            {user ? (
+                                <>
+                                    <div className="p-3 bg-gray-50 rounded-lg">
+                                        <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
+                                        <p className="text-xs text-gray-500">{user.email}</p>
+                                    </div>
+                                    {user.role === 'vendor' && (
+                                        <Link
+                                            href="/vendor/dashboard"
+                                            className="flex items-center space-x-2 p-3 w-full text-gray-700 hover:text-allegro-orange hover:bg-gray-50 rounded-lg transition-colors"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-allegro-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h18M3 6h18M3 18h18" />
+                                            </svg>
+                                            <span>Dashboard</span>
+                                        </Link>
+                                    )}
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="flex items-center space-x-2 p-3 w-full text-gray-700 hover:text-allegro-orange hover:bg-gray-50 rounded-lg transition-colors"
+                                    >
+                                        <LogOut className="h-5 w-5" />
+                                        <span>Logout</span>
+                                    </button>
+                                </>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    className="flex items-center space-x-2 p-3 text-gray-700 hover:text-allegro-orange hover:bg-gray-50 rounded-lg transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <User className="h-5 w-5" />
+                                    <span>{t('header.login')} / Register</span>
+                                </Link>
+                            )}
                         </div>
                     </motion.div>
                 )}

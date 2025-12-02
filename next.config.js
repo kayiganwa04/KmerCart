@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['media.istockphoto.com', 'images.unsplash.com', 'via.placeholder.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -22,6 +21,7 @@ const nextConfig = {
         pathname: '/**',
       },
     ],
+    unoptimized: false,
   },
 }
 
