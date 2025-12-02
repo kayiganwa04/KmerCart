@@ -1,0 +1,38 @@
+[
+  {
+    "id": "electronics",
+    "name": "Electronics",
+    "icon": "Smartphone",
+    "subcategories": ["Smartphones", "Laptops", "TVs", "Audio", "Gaming"]
+  },
+  {
+    "id": "fashion",
+    "name": "Fashion",
+    "icon": "ShirtIcon",
+    "subcategories": ["Women's Clothing", "Men's Clothing", "Shoes", "Accessories"]
+  },
+  {
+    "id": "home",
+    "name": "Home & Garden",
+    "icon": "Home",
+    "subcategories": ["Furniture", "Kitchen", "Garden", "Decoration"]
+  },
+  {
+    "id": "automotive",
+    "name": "Automotive",
+    "icon": "Car",
+    "subcategories": ["Car Parts", "Motorcycles", "Tools", "Accessories"]
+  },
+  {
+    "id": "sports",
+    "name": "Sports",
+    "icon": "Dumbbell",
+    "subcategories": ["Fitness", "Outdoor", "Team Sports", "Winter Sports"]
+  },
+  {
+    "id": "books",
+    "name": "Books & Media",
+    "icon": "Book",
+    "subcategories": ["Books", "Movies", "Music", "Games"]
+  }
+]

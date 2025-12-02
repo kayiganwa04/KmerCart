@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+:root {
+  --brand: #ff6200; /* primary */
+  --brand-dark: #e54900;
+  --page-bg: #f7f7f8;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --border: #e9e9ea;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: var(--page-bg);
+}
+
+/* Stat card */
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+}
+
+.stat-label { color: var(--muted); font-size: 0.875rem }
+.stat-value { font-size: 1.5rem; font-weight: 600; color: #111827 }
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+}
+
+.focus-ring:focus {
+  outline: 3px solid rgba(255,98,0,0.12);
+  outline-offset: 2px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

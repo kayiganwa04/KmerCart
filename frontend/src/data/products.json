@@ -1,0 +1,174 @@
+[
+  {
+    "id": "1",
+    "title": "iPhone 15 Pro Max 256GB Natural Titanium",
+    "price": 1299,
+    "originalPrice": 1399,
+    "image": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400"
+    ],
+    "description": "The iPhone 15 Pro Max. Forged in titanium and featuring the groundbreaking A17 Pro chip, a customizable Action Button, and the most powerful iPhone camera system ever.",
+    "category": "electronics",
+    "seller": {
+      "name": "TechStore Premium",
+      "rating": 4.8,
+      "reviewCount": 2547
+    },
+    "rating": 4.7,
+    "reviewCount": 1234,
+    "inStock": true,
+    "tags": ["new", "premium"]
+  },
+  {
+    "id": "2",
+    "title": "Samsung Galaxy S24 Ultra 512GB Titanium Black",
+    "price": 1199,
+    "image": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=400",
+      "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=400"
+    ],
+    "description": "Galaxy S24 Ultra with built-in S Pen, 200MP camera with 100x Space Zoom, and Galaxy AI features.",
+    "category": "electronics",
+    "seller": {
+      "name": "Samsung Official Store",
+      "rating": 4.9,
+      "reviewCount": 5432
+    },
+    "rating": 4.6,
+    "reviewCount": 987,
+    "inStock": true,
+    "tags": ["bestseller"]
+  },
+  {
+    "id": "3",
+    "title": "MacBook Air M3 13-inch 8GB 256GB Space Gray",
+    "price": 1099,
+    "image": "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400",
+      "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400"
+    ],
+    "description": "The M3 chip brings even greater capabilities to the 13-inch MacBook Air. With up to 18 hours of battery life, it's perfect for work and play.",
+    "category": "electronics",
+    "seller": {
+      "name": "Apple Store",
+      "rating": 4.9,
+      "reviewCount": 8765
+    },
+    "rating": 4.8,
+    "reviewCount": 2156,
+    "inStock": true,
+    "tags": ["new", "apple"]
+  },
+  {
+    "id": "4",
+    "title": "Nike Air Jordan 1 Retro High OG Chicago",
+    "price": 170,
+    "image": "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400",
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400"
+    ],
+    "description": "The Air Jordan 1 Retro High OG stays true to the original with classic details and premium materials.",
+    "category": "fashion",
+    "seller": {
+      "name": "SneakerZone",
+      "rating": 4.7,
+      "reviewCount": 3421
+    },
+    "rating": 4.5,
+    "reviewCount": 789,
+    "inStock": true,
+    "tags": ["limited", "sneakers"]
+  },
+  {
+    "id": "5",
+    "title": "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+    "price": 349,
+    "originalPrice": 399,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+      "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=400"
+    ],
+    "description": "Industry-leading noise canceling with Dual Noise Sensor technology. Up to 30-hour battery life with quick charge.",
+    "category": "electronics",
+    "seller": {
+      "name": "AudioPro",
+      "rating": 4.6,
+      "reviewCount": 1876
+    },
+    "rating": 4.7,
+    "reviewCount": 1543,
+    "inStock": true,
+    "tags": ["bestseller", "wireless"]
+  },
+  {
+    "id": "6",
+    "title": "Levi's 501 Original Fit Jeans - Dark Wash",
+    "price": 89,
+    "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400",
+      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400"
+    ],
+    "description": "The original jean. Modeled after the 1947 prototype, the 501 Original Fit is a classic straight leg jean.",
+    "category": "fashion",
+    "seller": {
+      "name": "Levi's Official",
+      "rating": 4.5,
+      "reviewCount": 2341
+    },
+    "rating": 4.4,
+    "reviewCount": 654,
+    "inStock": true,
+    "tags": ["classic", "denim"]
+  },
+  {
+    "id": "7",
+    "title": "Dyson V15 Detect Absolute Cordless Vacuum",
+    "price": 749,
+    "image": "https://images.unsplash.com/photo-1620049090842-b4c38b98f2c7?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1620049090842-b4c38b98f2c7?w=400",
+      "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400",
+      "https://images.unsplash.com/photo-1503602642458-232111445657?w=400"
+    ],
+    "description": "Dyson's most powerful cordless vacuum. Reveals hidden dust with laser detection and automatically adapts suction power.",
+    "category": "home",
+    "seller": {
+      "name": "HomeAppliances Pro",
+      "rating": 4.8,
+      "reviewCount": 1234
+    },
+    "rating": 4.6,
+    "reviewCount": 876,
+    "inStock": true,
+    "tags": ["premium", "cleaning"]
+  },
+  {
+    "id": "8",
+    "title": "PlayStation 5 Console",
+    "price": 499,
+    "image": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400",
+    "images": [
+      "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=400",
+      "https://images.unsplash.com/photo-1622297845775-5ff3fef71d13?w=400"
+    ],
+    "description": "Experience lightning-fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback.",
+    "category": "electronics",
+    "seller": {
+      "name": "GameCenter",
+      "rating": 4.7,
+      "reviewCount": 4567
+    },
+    "rating": 4.8,
+    "reviewCount": 2987,
+    "inStock": false,
+    "tags": ["gaming", "console"]
+  }
+]

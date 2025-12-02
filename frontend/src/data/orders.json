@@ -1,0 +1,35 @@
+[
+  {
+    "id": "o1",
+    "productId": "1",
+    "productTitle": "iPhone 15 Pro Max 256GB Natural Titanium",
+    "vendorName": "TechStore Premium",
+    "buyerEmail": "alice@example.com",
+    "quantity": 2,
+    "total": 2598,
+    "status": "shipped",
+    "createdAt": "2025-11-20T10:12:00.000Z"
+  },
+  {
+    "id": "o2",
+    "productId": "5",
+    "productTitle": "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+    "vendorName": "AudioPro",
+    "buyerEmail": "bob@example.com",
+    "quantity": 1,
+    "total": 349,
+    "status": "processing",
+    "createdAt": "2025-11-26T14:22:00.000Z"
+  },
+  {
+    "id": "o3",
+    "productId": "1",
+    "productTitle": "iPhone 15 Pro Max 256GB Natural Titanium",
+    "vendorName": "TechStore Premium",
+    "buyerEmail": "carol@example.com",
+    "quantity": 1,
+    "total": 1299,
+    "status": "delivered",
+    "createdAt": "2025-11-30T09:05:00.000Z"
+  }
+]
