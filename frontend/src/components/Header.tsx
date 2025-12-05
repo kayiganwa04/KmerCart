@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import authService from '@/services/auth.service';
+import SearchAutocomplete from './SearchAutocomplete';
 
 export default function Header() {
     const router = useRouter();
@@ -67,23 +68,7 @@ export default function Header() {
 
                     {/* Search Bar - Desktop */}
                     <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-                        <form onSubmit={handleSearch} className="w-full">
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder={t('header.searchPlaceholder')}
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full px-4 py-2 pl-4 pr-12 text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-allegro-orange focus:border-transparent outline-none transition-all"
-                                />
-                                <button
-                                    type="submit"
-                                    className="absolute right-0 top-0 h-full px-4 bg-allegro-orange text-white rounded-r-lg hover:bg-allegro-orange-dark transition-colors"
-                                >
-                                    <Search className="h-5 w-5" />
-                                </button>
-                            </div>
-                        </form>
+                        <SearchAutocomplete placeholder={t('header.searchPlaceholder')} className="w-full" />
                     </div>
 
                     {/* Right Side Icons */}
@@ -182,6 +167,12 @@ export default function Header() {
                                                     <span>Dashboard</span>
                                                 </Link>
                                             )}
+                                            <Link href="/orders" className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-allegro-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h18v4H3zM3 11h18v10H3z" />
+                                                </svg>
+                                                <span>My Orders</span>
+                                            </Link>
                                             <button
                                                 onClick={handleLogout}
                                                 className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center space-x-2"

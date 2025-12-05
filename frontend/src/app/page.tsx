@@ -2,17 +2,76 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import HeroSection from '@/components/HeroSection';
 import ProductCard from '@/components/ProductCard';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import products from '@/data/products.json';
+import productsApi, { Product as ApiProduct } from '@/services/productsApi';
 import { Product } from '@/types';
 
 export default function HomePage() {
     const { currentLocale } = useLanguage();
     const t = useTranslations();
-    const featuredProducts = products.slice(0, 8) as Product[];
+    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchFeaturedProducts() {
+            try {
+                // Get all active products from database (prioritize featured, then recent)
+                const response = await productsApi.getProducts({
+                    page: 1,
+                    limit: 20,
+                    sortBy: 'createdAt',
+                    sortOrder: 'desc'
+                });
+
+                // Transform API products to match frontend Product type
+                const transformedProducts: Product[] = response.products.map((p: ApiProduct) => ({
+                    id: p._id,
+                    title: p.name,
+                    price: p.price,
+                    originalPrice: p.originalPrice,
+                    image: p.mainImage || p.images[0] || '/placeholder.png',
+                    images: p.images || [],
+                    description: p.description || '',
+                    category: typeof p.categoryId === 'string' ? p.categoryId : (p.categoryId?._id || ''),
+                    rating: p.rating || 0,
+                    reviewCount: p.reviewCount || 0,
+                    inStock: p.stock > 0,
+                    seller: {
+                        name: p.vendorId?.businessName || 'Unknown Seller',
+                        rating: p.vendorId?.rating || 0,
+                        reviewCount: 0
+                    },
+                }));
+
+                // Add dummy products as fallback if we have less than 8 products
+                const dummyProducts: Product[] = [
+                    { id: 'dummy-1', title: 'Premium Wireless Headphones', price: 299.99, originalPrice: 399.99, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500', images: [], description: '', category: 'electronics', rating: 4.5, reviewCount: 128, inStock: true, seller: { name: 'AudioTech', rating: 4.8, reviewCount: 0 } },
+                    { id: 'dummy-2', title: 'Smart Watch Pro', price: 449.99, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500', images: [], description: '', category: 'electronics', rating: 4.7, reviewCount: 256, inStock: true, seller: { name: 'TechGear', rating: 4.9, reviewCount: 0 } },
+                    { id: 'dummy-3', title: 'Laptop Stand Aluminum', price: 59.99, originalPrice: 79.99, image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500', images: [], description: '', category: 'electronics', rating: 4.3, reviewCount: 89, inStock: true, seller: { name: 'OfficeEssentials', rating: 4.6, reviewCount: 0 } },
+                    { id: 'dummy-4', title: 'Mechanical Keyboard RGB', price: 129.99, image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=500', images: [], description: '', category: 'electronics', rating: 4.6, reviewCount: 342, inStock: true, seller: { name: 'GamersHub', rating: 4.7, reviewCount: 0 } },
+                    { id: 'dummy-5', title: '4K Webcam Ultra HD', price: 189.99, originalPrice: 249.99, image: 'https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=500', images: [], description: '', category: 'electronics', rating: 4.4, reviewCount: 167, inStock: true, seller: { name: 'StreamPro', rating: 4.5, reviewCount: 0 } },
+                    { id: 'dummy-6', title: 'USB-C Hub 7-in-1', price: 49.99, image: 'https://images.unsplash.com/photo-1625948515291-69613efd103f?w=500', images: [], description: '', category: 'electronics', rating: 4.2, reviewCount: 203, inStock: true, seller: { name: 'ConnectHub', rating: 4.4, reviewCount: 0 } },
+                    { id: 'dummy-7', title: 'Portable SSD 1TB', price: 199.99, originalPrice: 249.99, image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500', images: [], description: '', category: 'electronics', rating: 4.8, reviewCount: 421, inStock: true, seller: { name: 'DataVault', rating: 4.9, reviewCount: 0 } },
+                    { id: 'dummy-8', title: 'Wireless Mouse Ergonomic', price: 39.99, image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=500', images: [], description: '', category: 'electronics', rating: 4.1, reviewCount: 156, inStock: true, seller: { name: 'ErgoTech', rating: 4.3, reviewCount: 0 } },
+                ];
+
+                // Combine database products with dummy products, keeping only up to 8 total
+                const allProducts = [...transformedProducts, ...dummyProducts].slice(0, 8);
+                setFeaturedProducts(allProducts);
+            } catch (error) {
+                console.error('Failed to fetch featured products', error);
+                // Fallback to empty array on error
+                setFeaturedProducts([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchFeaturedProducts();
+    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -56,18 +115,28 @@ export default function HomePage() {
                         </p>
                     </motion.div>
 
-                    <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                    >
-                        {featuredProducts.map((product) => (
-                            <motion.div key={product.id} variants={itemVariants}>
-                                <ProductCard product={product} />
-                            </motion.div>
-                        ))}
-                    </motion.div>
+                    {loading ? (
+                        <div className="flex items-center justify-center py-12">
+                            <p className="text-gray-500">Loading products...</p>
+                        </div>
+                    ) : featuredProducts.length === 0 ? (
+                        <div className="flex items-center justify-center py-12">
+                            <p className="text-gray-500">No featured products available yet.</p>
+                        </div>
+                    ) : (
+                        <motion.div
+                            variants={containerVariants}
+                            initial="hidden"
+                            animate="visible"
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                        >
+                            {featuredProducts.map((product) => (
+                                <motion.div key={product.id} variants={itemVariants}>
+                                    <ProductCard product={product} />
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
                 </div>
             </section>
 

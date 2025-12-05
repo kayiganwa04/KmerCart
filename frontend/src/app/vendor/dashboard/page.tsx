@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import authService from '@/services/auth.service';
 import vendorApi, { DashboardStats, Product as VendorProduct } from '@/services/vendorApi';
+import uploadApi from '@/services/uploadApi';
 import Link from 'next/link';
 import Sparkline from '@/components/Sparkline';
 import Toast from '@/components/Toast';
@@ -151,7 +152,7 @@ export default function VendorDashboardPage() {
                 <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
                     <h2 className="text-2xl font-bold text-blue-900 mb-2">Welcome to KmerCart Vendor Portal!</h2>
                     <p className="text-blue-800 mb-4">
-                        Complete your vendor profile below to start selling on our platform. Once approved by our team, you'll be able to list products and manage orders.
+                        Complete your vendor profile below to start selling on our platform. Once approved by our team, you&apos;ll be able to list products and manage orders.
                     </p>
                     <div className="flex items-center gap-2 text-sm text-blue-700">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -166,7 +167,7 @@ export default function VendorDashboardPage() {
                 <div>
                     <h1 className="text-3xl font-bold text-allegro-orange">Vendor Dashboard</h1>
                     <p className="text-gray-600 mt-1">
-                        {profileForm?.businessName ? `Welcome back, ${user.firstName} ${user.lastName}.` : `Hello, ${user.firstName} ${user.lastName}! Let's set up your vendor profile.`}
+                        {profileForm?.businessName ? `Welcome back, ${user.firstName} ${user.lastName}.` : `Hello, ${user.firstName} ${user.lastName}! Let&apos;s set up your vendor profile.`}
                     </p>
                 </div>
                 <div className="flex gap-3">
@@ -415,6 +416,34 @@ export default function VendorDashboardPage() {
                                             value={profileForm?.businessDescription || ''}
                                             onChange={(e) => setProfileForm({ ...profileForm, businessDescription: e.target.value })}
                                             className="w-full border p-2 rounded focus-ring"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-gray-700 mb-1" htmlFor="businessLogo">Business Logo</label>
+                                        {profileForm?.businessLogo && (
+                                            <div className="mb-2">
+                                                <img src={profileForm.businessLogo} alt="Business Logo" className="h-20 w-20 object-cover rounded" />
+                                            </div>
+                                        )}
+                                        <input
+                                            id="businessLogo"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    try {
+                                                        const uploaded = await uploadApi.uploadSingleImage(file);
+                                                        setProfileForm({ ...profileForm, businessLogo: uploaded.url });
+                                                        setToast('Logo uploaded successfully');
+                                                    } catch (err: any) {
+                                                        console.error('Logo upload failed', err);
+                                                        setToast(err.response?.data?.message || 'Failed to upload logo');
+                                                    }
+                                                }
+                                            }}
+                                            className="w-full border p-2 rounded focus-ring text-xs"
                                         />
                                     </div>
 

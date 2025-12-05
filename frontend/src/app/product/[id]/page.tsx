@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { Star, ShoppingCart, Heart, Truck, Shield, RotateCcw } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import ProductCard from '@/components/ProductCard';
-import products from '@/data/products.json';
+import productsApi, { Product as ApiProduct } from '@/services/productsApi';
 import { Product } from '@/types';
 
 interface ProductPageProps {
@@ -17,7 +17,10 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
-    const product = products.find(p => p.id === params.id) as Product;
+    const router = useRouter();
+    const [product, setProduct] = useState<Product | null>(null);
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const { currentLocale } = useLanguage();
@@ -25,14 +28,80 @@ export default function ProductPage({ params }: ProductPageProps) {
 
     const addItem = useCartStore((state) => state.addItem);
 
+    useEffect(() => {
+        async function fetchProductData() {
+            try {
+                setLoading(true);
+
+                // Fetch product details
+                const productData = await productsApi.getProductById(params.id);
+
+                // Transform API product to frontend Product type
+                const transformedProduct: Product = {
+                    id: productData._id,
+                    title: productData.name,
+                    price: productData.price,
+                    originalPrice: productData.originalPrice,
+                    image: productData.mainImage || productData.images[0] || '/placeholder.png',
+                    images: productData.images.length > 0 ? productData.images : [productData.mainImage || '/placeholder.png'],
+                    rating: productData.rating || 0,
+                    reviewCount: productData.reviewCount || 0,
+                    seller: {
+                        name: productData.vendorId?.businessName || 'Unknown Seller',
+                        rating: productData.vendorId?.rating || 0,
+                        reviewCount: 0
+                    },
+                    inStock: productData.stock > 0,
+                    category: productData.categoryId?.slug || 'general',
+                    description: productData.description,
+                };
+
+                setProduct(transformedProduct);
+
+                // Fetch related products
+                const relatedData = await productsApi.getRelatedProducts(params.id, 4);
+                const transformedRelated: Product[] = relatedData.map((p: ApiProduct) => ({
+                    id: p._id,
+                    title: p.name,
+                    price: p.price,
+                    originalPrice: p.originalPrice,
+                    image: p.mainImage || p.images[0] || '/placeholder.png',
+                    images: p.images || [],
+                    description: p.description || '',
+                    category: typeof p.categoryId === 'string' ? p.categoryId : (p.categoryId?._id || ''),
+                    rating: p.rating || 0,
+                    reviewCount: p.reviewCount || 0,
+                    seller: {
+                        name: p.vendorId?.businessName || 'Unknown Seller',
+                        rating: p.vendorId?.rating || 0,
+                        reviewCount: 0
+                    },
+                    inStock: p.stock > 0,
+                }));
+
+                setRelatedProducts(transformedRelated);
+            } catch (error) {
+                console.error('Failed to fetch product', error);
+                router.push('/404');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchProductData();
+    }, [params.id, router]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p className="text-gray-500">Loading product...</p>
+            </div>
+        );
+    }
+
     if (!product) {
         notFound();
     }
-
-    // Get related products from the same category
-    const relatedProducts = products
-        .filter(p => p.category === product.category && p.id !== product.id)
-        .slice(0, 4) as Product[];
 
     const handleAddToCart = () => {
         for (let i = 0; i < quantity; i++) {

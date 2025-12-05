@@ -44,7 +44,7 @@ export default function RegisterPage() {
 
         try {
             const { confirmPassword, ...registrationData } = formData;
-            await authService.register(registrationData);
+            await authService.register(registrationData as any);
 
             // Redirect to home or dashboard after successful registration
             router.push('/');

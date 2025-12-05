@@ -104,7 +104,7 @@ export default function OrderDetailPage() {
             <div className="max-w-7xl mx-auto py-8 px-4">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
                     <h3 className="font-semibold mb-2">Order Not Found</h3>
-                    <p>The order you're looking for doesn't exist or you don't have access to it.</p>
+                    <p>The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.</p>
                     <button
                         onClick={() => router.push('/vendor/orders')}
                         className="mt-3 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"

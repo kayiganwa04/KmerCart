@@ -169,7 +169,7 @@ export default function EditProductPage() {
             <div className="max-w-4xl mx-auto py-8 px-4">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
                     <h3 className="font-semibold mb-2">Product Not Found</h3>
-                    <p>The product you're looking for doesn't exist or you don't have access to it.</p>
+                    <p>The product you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.</p>
                     <button
                         onClick={() => router.push('/vendor/products')}
                         className="mt-3 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"

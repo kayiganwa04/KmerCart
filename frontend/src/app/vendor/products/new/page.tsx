@@ -89,14 +89,10 @@ export default function NewProductPage() {
         e.preventDefault();
 
         // Validation
-        if (!formData.name || !formData.description || !formData.price || !formData.sku || !formData.stock) {
-            setToast('Please fill in all required fields');
+        if (!formData.name || !formData.description || !formData.price || !formData.sku || !formData.stock || !formData.categoryId) {
+            setToast('Please fill in all required fields including category');
             return;
         }
-
-        // For now, use a default category ID if not selected
-        // In production, you would fetch categories and require selection
-        const categoryId = formData.categoryId || '000000000000000000000001';
 
         setLoading(true);
         try {
@@ -104,7 +100,7 @@ export default function NewProductPage() {
                 name: formData.name,
                 description: formData.description,
                 shortDescription: formData.shortDescription || undefined,
-                categoryId,
+                categoryId: formData.categoryId,
                 subcategoryId: formData.subcategoryId || undefined,
                 price: parseFloat(formData.price),
                 originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
@@ -194,6 +190,28 @@ export default function NewProductPage() {
                             required
                             placeholder="Detailed product description..."
                         />
+                    </div>
+
+                    <div>
+                        <label htmlFor="categoryId" className="block text-sm font-medium mb-1">
+                            Category <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                            id="categoryId"
+                            name="categoryId"
+                            value={formData.categoryId}
+                            onChange={handleChange}
+                            className="w-full border p-2 rounded focus-ring"
+                            required
+                        >
+                            <option value="">Select a category</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="fashion">Fashion</option>
+                            <option value="home">Home & Living</option>
+                            <option value="automotive">Automotive</option>
+                            <option value="sports">Sports & Fitness</option>
+                            <option value="books">Books</option>
+                        </select>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

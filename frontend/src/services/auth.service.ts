@@ -1,4 +1,5 @@
 import api from './api';
+import { useCartStore } from '@/store/cartStore';
 
 export interface RegisterData {
   email: string;
@@ -58,6 +59,24 @@ class AuthService {
 
     // Notify other parts of the app that auth state changed
     try {
+      // If there is a guest cart, sync it to the server now (lazy-import cartApi to avoid circular deps)
+      try {
+        const localItems = useCartStore.getState().items || [];
+        if (localItems.length > 0) {
+          const guestItems = localItems.map((li) => ({ productId: (li.product as any).id, quantity: li.quantity }));
+          try {
+            const cartApi = (await import('./cartApi')).default;
+            await cartApi.syncCart(guestItems);
+            // Clear guest cart since server now holds the cart
+            try { useCartStore.getState().clearCart(); } catch (e) { /* ignore */ }
+          } catch (e) {
+            console.error('Failed to sync guest cart on register:', e);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to read guest cart on register:', e);
+      }
+
       window.dispatchEvent(new CustomEvent('authChanged', { detail: { user } }));
     } catch (e) {
       // ignore in non-browser environments
@@ -85,6 +104,24 @@ class AuthService {
 
     // Notify other parts of the app that auth state changed
     try {
+      // Sync guest cart to server when logging in (lazy-import cartApi to avoid circular deps)
+      try {
+        const localItems = useCartStore.getState().items || [];
+        if (localItems.length > 0) {
+          const guestItems = localItems.map((li) => ({ productId: (li.product as any).id, quantity: li.quantity }));
+          try {
+            const cartApi = (await import('./cartApi')).default;
+            await cartApi.syncCart(guestItems);
+            // Clear guest cart locally after successful sync
+            try { useCartStore.getState().clearCart(); } catch (e) { /* ignore */ }
+          } catch (e) {
+            console.error('Failed to sync guest cart on login:', e);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to read guest cart on login:', e);
+      }
+
       window.dispatchEvent(new CustomEvent('authChanged', { detail: { user } }));
     } catch (e) {
       // ignore in non-browser environments
@@ -104,6 +141,14 @@ class AuthService {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
       try {
+        // Clear guest cart from zustand store and remove persisted storage
+        const clear = useCartStore.getState().clearCart;
+        if (typeof clear === 'function') clear();
+      } catch (e) {
+        // fallback: remove persisted localStorage entry
+        try { localStorage.removeItem('cart-storage'); } catch (e) { /* ignore */ }
+      }
+      try {
         document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       } catch (e) {
@@ -113,6 +158,8 @@ class AuthService {
       // Notify other parts of the app that auth state changed
       try {
         window.dispatchEvent(new CustomEvent('authChanged', { detail: { user: null } }));
+        // Notify other parts that cart was cleared
+        try { window.dispatchEvent(new CustomEvent('cartCleared')); } catch (e) { /* ignore */ }
       } catch (e) {
         // ignore in non-browser environments
       }
@@ -134,6 +181,10 @@ class AuthService {
       }
     }
     return null;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('accessToken');
   }
 
   isAuthenticated(): boolean {

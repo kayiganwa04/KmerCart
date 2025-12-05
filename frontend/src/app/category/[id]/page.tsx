@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -8,7 +8,7 @@ import { Filter, Grid, List, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import ProductCard from '@/components/ProductCard';
-import products from '@/data/products.json';
+import productsApi, { Product as ApiProduct } from '@/services/productsApi';
 import categories from '@/data/categories.json';
 import { Product, Category } from '@/types';
 
@@ -22,6 +22,10 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     const [showFilters, setShowFilters] = useState(false);
     const [priceRange, setPriceRange] = useState({ min: 0, max: 2000 });
     const [inStockOnly, setInStockOnly] = useState(false);
+    const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const { currentLocale } = useLanguage();
     const t = useTranslations();
 
@@ -30,36 +34,76 @@ export default function CategoryPage({ params }: CategoryPageProps) {
         notFound();
     }
 
-    // Filter products by category
-    let categoryProducts = products.filter(p => p.category === params.id) as Product[];
+    useEffect(() => {
+        fetchProducts();
+    }, [params.id, sortBy, priceRange, inStockOnly, page]);
 
-    // Apply filters
-    if (inStockOnly) {
-        categoryProducts = categoryProducts.filter(p => p.inStock);
-    }
+    async function fetchProducts() {
+        try {
+            setLoading(true);
 
-    categoryProducts = categoryProducts.filter(
-        p => p.price >= priceRange.min && p.price <= priceRange.max
-    );
+            // Determine sort field and order
+            let sortField = 'createdAt';
+            let sortOrder: 'asc' | 'desc' = 'desc';
 
-    // Apply sorting
-    switch (sortBy) {
-        case 'price-low':
-            categoryProducts.sort((a, b) => a.price - b.price);
-            break;
-        case 'price-high':
-            categoryProducts.sort((a, b) => b.price - a.price);
-            break;
-        case 'rating':
-            categoryProducts.sort((a, b) => b.rating - a.rating);
-            break;
-        case 'newest':
-            // In a real app, you'd sort by creation date
-            categoryProducts.sort((a, b) => a.title.localeCompare(b.title));
-            break;
-        default:
-            // Featured - keep original order
-            break;
+            switch (sortBy) {
+                case 'price-low':
+                    sortField = 'price';
+                    sortOrder = 'asc';
+                    break;
+                case 'price-high':
+                    sortField = 'price';
+                    sortOrder = 'desc';
+                    break;
+                case 'rating':
+                    sortField = 'rating';
+                    sortOrder = 'desc';
+                    break;
+                case 'newest':
+                    sortField = 'createdAt';
+                    sortOrder = 'desc';
+                    break;
+            }
+
+            const response = await productsApi.getProducts({
+                page,
+                limit: 20,
+                minPrice: priceRange.min,
+                maxPrice: priceRange.max,
+                sortBy: sortField,
+                sortOrder,
+            });
+
+            // Transform and filter products
+            const transformedProducts: Product[] = response.products
+                .map((p: ApiProduct) => ({
+                    id: p._id,
+                    title: p.name,
+                    price: p.price,
+                    originalPrice: p.originalPrice,
+                    image: p.mainImage || p.images[0] || '/placeholder.png',
+                    images: p.images || [],
+                    description: p.description || '',
+                    rating: p.rating || 0,
+                    reviewCount: p.reviewCount || 0,
+                    seller: {
+                        name: p.vendorId?.businessName || 'Unknown Seller',
+                        rating: p.vendorId?.rating || 0,
+                        reviewCount: 0
+                    },
+                    inStock: p.stock > 0,
+                    category: params.id,
+                }))
+                .filter(p => !inStockOnly || p.inStock);
+
+            setCategoryProducts(transformedProducts);
+            setTotalPages(response.pagination.pages);
+        } catch (error) {
+            console.error('Failed to fetch category products', error);
+            setCategoryProducts([]);
+        } finally {
+            setLoading(false);
+        }
     }
 
     const containerVariants = {
@@ -246,54 +290,60 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 </motion.div>
 
                 {/* Products Grid */}
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className={`grid gap-6 ${viewMode === 'grid'
-                        ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                        : 'grid-cols-1'
-                        }`}
-                >
-                    {categoryProducts.map((product) => (
-                        <motion.div key={product.id} variants={itemVariants}>
-                            {viewMode === 'grid' ? (
-                                <ProductCard product={product} />
-                            ) : (
-                                <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center space-x-6 hover:shadow-lg transition-shadow">
-                                    <Image
-                                        src={product.image}
-                                        alt={product.title}
-                                        width={96}
-                                        height={96}
-                                        className="w-24 h-24 object-cover rounded-lg"
-                                    />
-                                    <div className="flex-1">
-                                        <h3 className="text-lg font-medium text-gray-900 mb-2">{product.title}</h3>
-                                        <p className="text-gray-600 text-sm mb-2">{t('product.by')} {product.seller.name}</p>
-                                        <div className="flex items-center space-x-4">
-                                            <span className="text-xl font-bold text-gray-900">
-                                                ${product.price}
-                                            </span>
-                                            <div className="flex items-center space-x-1">
-                                                <span className="text-yellow-400">★</span>
-                                                <span className="text-sm text-gray-600">
-                                                    {product.rating} ({product.reviewCount})
+                {loading ? (
+                    <div className="flex items-center justify-center py-16">
+                        <p className="text-gray-500">Loading products...</p>
+                    </div>
+                ) : (
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className={`grid gap-6 ${viewMode === 'grid'
+                            ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                            : 'grid-cols-1'
+                            }`}
+                    >
+                        {categoryProducts.map((product) => (
+                            <motion.div key={product.id} variants={itemVariants}>
+                                {viewMode === 'grid' ? (
+                                    <ProductCard product={product} />
+                                ) : (
+                                    <div className="bg-white border border-gray-200 rounded-lg p-6 flex items-center space-x-6 hover:shadow-lg transition-shadow">
+                                        <Image
+                                            src={product.image}
+                                            alt={product.title}
+                                            width={96}
+                                            height={96}
+                                            className="w-24 h-24 object-cover rounded-lg"
+                                        />
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-medium text-gray-900 mb-2">{product.title}</h3>
+                                            <p className="text-gray-600 text-sm mb-2">{t('product.by')} {product.seller.name}</p>
+                                            <div className="flex items-center space-x-4">
+                                                <span className="text-xl font-bold text-gray-900">
+                                                    ${product.price}
                                                 </span>
+                                                <div className="flex items-center space-x-1">
+                                                    <span className="text-yellow-400">★</span>
+                                                    <span className="text-sm text-gray-600">
+                                                        {product.rating} ({product.reviewCount})
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <button className="bg-allegro-orange text-white px-6 py-2 rounded-lg hover:bg-allegro-orange-dark transition-colors">
+                                            {t('common.addToCart')}
+                                        </button>
                                     </div>
-                                    <button className="bg-allegro-orange text-white px-6 py-2 rounded-lg hover:bg-allegro-orange-dark transition-colors">
-                                        {t('common.addToCart')}
-                                    </button>
-                                </div>
-                            )}
-                        </motion.div>
-                    ))}
-                </motion.div>
+                                )}
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
 
                 {/* No Products Found */}
-                {categoryProducts.length === 0 && (
+                {!loading && categoryProducts.length === 0 && (
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
